@@ -29,6 +29,39 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
+router.patch('/users/:id', async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'email', 'password', 'age'];
+
+  const isValidUpdate = updates.every(update =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidUpdate) {
+    return res.status(400).send({ error: 'Invalid updates' });
+  }
+
+  const _id = req.params.id;
+  try {
+    const user = await User.findByIdAndUpdate(_id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!user) {
+      return res.status(404).send();
+    }
+
+    res.send(user);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      res.status(422).send(error.message);
+    }
+
+    res.status(500).send();
+  }
+});
+
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
 
