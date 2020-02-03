@@ -62,6 +62,20 @@ router.patch('/users/:id', async (req, res) => {
   }
 });
 
+router.delete('/users/:id', async (req, res) => {
+  const _id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndDelete(_id);
+    if (!user) {
+      res.status(404).send();
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
 
