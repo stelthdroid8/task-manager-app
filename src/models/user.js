@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// middleware to has passwords
 userSchema.pre('save', async function(next) {
   const user = this;
 
