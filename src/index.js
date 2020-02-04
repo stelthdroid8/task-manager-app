@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 //require in external routes
