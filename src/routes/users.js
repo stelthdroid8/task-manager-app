@@ -59,7 +59,7 @@ router.get('/users/me', authMiddleware, async (req, res) => {
   res.send(req.user);
 });
 
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/me', authMiddleware, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
 
@@ -71,22 +71,16 @@ router.patch('/users/:id', async (req, res) => {
     return res.status(400).send({ error: 'Invalid updates' });
   }
 
-  const _id = req.params.id;
   try {
-    const user = await User.findById(_id);
-    updates.forEach(update => (user[update] = req.body[update]));
-    await user.save();
+    updates.forEach(update => (req.user[update] = req.body[update]));
+    await req.user.save();
 
-    if (!user) {
-      return res.status(404).send();
-    }
-
-    res.send(user);
+    res.send(req.user);
   } catch (error) {
     if (error.name === 'ValidationError') {
       res.status(422).send(error.message);
     }
-
+    console.log(error);
     res.status(500).send();
   }
 });
