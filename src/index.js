@@ -8,6 +8,7 @@ require('dotenv').config();
 const userRoutes = require('./routes/users');
 const taskRoutes = require('./routes/tasks');
 
+// const authMiddleware = require('./middleware/auth');
 //express server setup
 const app = express();
 const port = process.env.PORT || 3000;
