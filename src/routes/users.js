@@ -1,18 +1,14 @@
 //USER ROUTES
 const express = require('express');
+const authMiddleware = require('../middleware/auth');
+const User = require('../models/user');
 
 require('../db/mongoose');
-const User = require('../models/user');
 
 router = express.Router();
 
-router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.status(500).send();
-  }
+router.get('/users/me', authMiddleware, async (req, res) => {
+  res.send(req.user);
 });
 
 router.get('/users/:id', async (req, res) => {
@@ -75,7 +71,7 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
-router.post('/users', async (req, res) => {
+router.post('/users', authMiddleware, async (req, res) => {
   const user = new User(req.body);
 
   try {
