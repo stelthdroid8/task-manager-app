@@ -3,8 +3,23 @@ const express = require('express');
 
 require('../db/mongoose');
 const Task = require('../models/task');
+const authMiddleware = require('../middleware/auth');
 
 router = express.Router();
+
+router.post('/tasks', authMiddleware, async (req, res) => {
+  // const task = new Task(req.body);
+  const task = new Task({
+    ...req.body,
+    owner: req.user._id
+  });
+  try {
+    await task.save();
+    res.status(201).send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
 router.get('/tasks', async (req, res) => {
   try {
@@ -76,17 +91,6 @@ router.delete('/tasks/:id', async (req, res) => {
     res.status(200).send(task);
   } catch (error) {
     res.status(500).send(error.message);
-  }
-});
-
-router.post('/tasks', async (req, res) => {
-  const task = new Task(req.body);
-
-  try {
-    await task.save();
-    res.status(201).send(task);
-  } catch (error) {
-    res.status(400).send(error);
   }
 });
 
