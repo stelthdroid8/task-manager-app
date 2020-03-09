@@ -4,53 +4,58 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Task = require('./task');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-    lowercase: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Email is  invalid');
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('Email is  invalid');
+        }
       }
-    }
-  },
-  password: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 6,
-    validate(value) {
-      if (validator.contains(value.toLowerCase(), 'password')) {
-        throw new Error('your password can not contain the word password');
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 6,
+      validate(value) {
+        if (validator.contains(value.toLowerCase(), 'password')) {
+          throw new Error('your password can not contain the word password');
+        }
       }
-    }
-  },
-  age: {
-    type: Number,
-    default: 0,
-    validate(value) {
-      if (value < 0) {
-        throw new Error('Age must be a positive number greater than 0');
+    },
+    age: {
+      type: Number,
+      default: 0,
+      validate(value) {
+        if (value < 0) {
+          throw new Error('Age must be a positive number greater than 0');
+        }
       }
-    }
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true
+        }
       }
-    }
-  ]
-});
+    ]
+  },
+  {
+    timestamps: true
+  }
+);
 
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
