@@ -21,6 +21,7 @@ router.post('/tasks', authMiddleware, async (req, res) => {
   }
 });
 
+//limit & skip keywords for pagination
 router.get('/tasks', authMiddleware, async (req, res) => {
   try {
     // const tasks = await Task.find({ owner: req.user._id });
@@ -32,7 +33,11 @@ router.get('/tasks', authMiddleware, async (req, res) => {
     await req.user
       .populate({
         path: 'tasks',
-        match
+        match,
+        options: {
+          limit: parseInt(req.query.limit),
+          skip: parseInt(req.query.skip)
+        }
       })
       .execPopulate();
     res.send(req.user.tasks);
