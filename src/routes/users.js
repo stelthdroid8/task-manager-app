@@ -1,6 +1,8 @@
 //USER ROUTES
 const express = require('express');
 const authMiddleware = require('../middleware/auth');
+const multer = require('multer');
+
 const User = require('../models/user');
 
 require('../db/mongoose');
@@ -92,6 +94,24 @@ router.delete('/users/me', authMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
+});
+
+const upload = multer({
+  dest: 'avatars',
+  limits: { fileSize: 1000000 },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(
+        new Error('File must be an image [supported: .jpg, .jpeg, .png]')
+      );
+    }
+
+    cb(undefined, true);
+  }
+});
+
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+  res.send();
 });
 
 module.exports = router;
