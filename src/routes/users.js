@@ -113,7 +113,9 @@ router.post(
   '/users/me/avatar',
   authMiddleware,
   upload.single('avatar'),
-  (req, res) => {
+  async (req, res) => {
+    req.user.avatar = req.file.buffer;
+    await req.user.save();
     res.send();
   },
   (error, req, res, next) => {
