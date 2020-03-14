@@ -112,6 +112,7 @@ const upload = multer({
 
 router.post(
   '/users/me/avatar',
+  authMiddleware,
   upload.single('avatar'),
   (req, res) => {
     res.send();
