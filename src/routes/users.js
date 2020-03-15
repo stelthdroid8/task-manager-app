@@ -82,7 +82,7 @@ router.patch('/users/me', authMiddleware, async (req, res) => {
     if (error.name === 'ValidationError') {
       res.status(422).send(error.message);
     }
-    console.log(error);
+    // console.log(error);
     res.status(500).send();
   }
 });
@@ -122,5 +122,20 @@ router.post(
     res.status(400).send({ error: error.message });
   }
 );
+
+router.delete('/users/me/avatar', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.avatar) {
+      req.user.avatar = undefined;
+
+      await req.user.save();
+
+      res.status(202).send();
+    }
+    res.status(404).send();
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
 
 module.exports = router;
