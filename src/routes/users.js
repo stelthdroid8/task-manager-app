@@ -99,10 +99,8 @@ router.delete('/users/me', authMiddleware, async (req, res) => {
 const upload = multer({
   limits: { fileSize: 1000000 },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(
-        new Error('File must be an image [supported: .jpg, .jpeg, .png]')
-      );
+    if (!file.originalname.match(/\.(jpg|jpeg)$/)) {
+      return cb(new Error('File must be an image [supported: .jpg, .jpeg]'));
     }
 
     cb(undefined, true);
@@ -133,6 +131,21 @@ router.delete('/users/me/avatar', authMiddleware, async (req, res) => {
       res.status(202).send();
     }
     res.status(404).send();
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
+
+router.get('/users/:id/avatar', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user || !user.avatar) {
+      throw new Error('No user or user associated avatar found');
+    }
+
+    res.set('Content-Type', 'image/jpg');
+    res.send(user.avatar);
   } catch (error) {
     res.status(404).send(error.message);
   }
