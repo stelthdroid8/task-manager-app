@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/stelthdroid8/task-manager-app#readme",
   "dependencies": {
+    "@sendgrid/mail": "^6.5.4",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
